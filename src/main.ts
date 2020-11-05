@@ -2,6 +2,8 @@ import GLInstance from './gl';
 import * as utils from './utils';
 import vShaderSrc from './shaders/vertex.vert';
 import fShaderSrc from './shaders/fragment.frag';
+import { RenderLoop } from './render-loop';
+
 
 function main() {
   const gl = GLInstance('glcanvas');
@@ -10,17 +12,9 @@ function main() {
     return;
   }
 
-  gl.fSetSize(500, 500)
-    .fClear();
+  gl.fSetSize(500, 500).fClear();
 
-  const vShader = utils.createShader(gl, vShaderSrc, gl.VERTEX_SHADER);
-  const fShader = utils.createShader(gl, fShaderSrc, gl.FRAGMENT_SHADER);
-
-  if (!vShader || !fShader) {
-    return;
-  }
-
-  const shaderProg = utils.createProgram(gl, vShader, fShader, true);
+  const shaderProg = utils.domShaderProgram(gl, vShaderSrc, fShaderSrc, true);
 
   if (!shaderProg) {
     return;
@@ -34,16 +28,8 @@ function main() {
   
   // setup data buffers
   const vertices = new Float32Array([0, 0, 0, 0.5, 0.5, 0]);
-  const bufferVertices = gl.createBuffer();
-
-  if (!bufferVertices) {
-    return;
-  }
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, bufferVertices);
-  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-  gl.bindBuffer(gl.ARRAY_BUFFER, null);
-
+  const bufferVertices = gl.fCreateArrayBuffer(vertices)
+  
   // setup for drawing
   gl.useProgram(shaderProg);  // activate the Shader
   gl.uniform1f(uPointSize, 50.0); // store data to the shader's uniform variable uPointSize
@@ -54,7 +40,14 @@ function main() {
   gl.vertexAttribPointer(aPositionLoc, 3, gl.FLOAT, false, 0, 0); // set which buffer the attribute will pull data from
   gl.bindBuffer(gl.ARRAY_BUFFER, null); // done setting up the buffer
 
-  gl.drawArrays(gl.POINTS, 0, 2);
+  const onRender = () => {
+    gl.uniform1f(uPointSize, 50.0);
+
+    gl.fClear();
+    gl.drawArrays(gl.POINTS, 0, vertices.length / 3);
+  }
+
+  new RenderLoop(onRender).start();
 }
 
 window.addEventListener('load', main);

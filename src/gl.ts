@@ -28,6 +28,21 @@ function GLInstance(canvasID: string): WebGL2RenderingContextExt | null {
     return this;
   }
 
+  // Create and fill our array buffer
+  gl.fCreateArrayBuffer = function(floatArray: Float32Array, isStatic = true): WebGLBuffer | null {
+    const buffer = this.createBuffer();
+
+    if (!buffer) {
+      return null;
+    }
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, floatArray, isStatic ? gl.STATIC_DRAW : gl.DYNAMIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    return buffer;
+  }
+
   return gl;
 }
 

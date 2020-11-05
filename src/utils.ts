@@ -60,3 +60,19 @@ export function createProgram(
 
   return prog;
 }
+
+export function domShaderProgram(
+  gl: WebGL2RenderingContext,
+  vShaderSrc: string,
+  fShaderSrc: string,
+  shouldValidate: boolean
+): WebGLProgram | null {
+  const vShader = createShader(gl, vShaderSrc, gl.VERTEX_SHADER);
+  const fShader = createShader(gl, fShaderSrc, gl.FRAGMENT_SHADER);
+
+  if (!vShader || !fShader) {
+    return null;
+  }
+
+  return createProgram(gl, vShader, fShader, shouldValidate);
+}
