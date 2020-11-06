@@ -2,7 +2,6 @@ import GLInstance from './gl';
 import * as utils from './utils';
 import vShaderSrc from './shaders/vertex.vert';
 import fShaderSrc from './shaders/fragment.frag';
-import { RenderLoop } from './render-loop';
 
 
 function main() {
@@ -40,14 +39,12 @@ function main() {
   gl.vertexAttribPointer(aPositionLoc, 3, gl.FLOAT, false, 0, 0); // set which buffer the attribute will pull data from
   gl.bindBuffer(gl.ARRAY_BUFFER, null); // done setting up the buffer
 
-  const onRender = () => {
+  gl.fAnimate(() => {
     gl.uniform1f(uPointSize, 50.0);
 
     gl.fClear();
     gl.drawArrays(gl.POINTS, 0, vertices.length / 3);
-  }
-
-  new RenderLoop(onRender).start();
+  }, 60);
 }
 
 window.addEventListener('load', main);

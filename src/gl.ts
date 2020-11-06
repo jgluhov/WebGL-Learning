@@ -1,3 +1,5 @@
+import { RenderLoop } from './render-loop'  ;
+
 function GLInstance(canvasID: string): WebGL2RenderingContextExt | null {
   const canvas = document.getElementById(canvasID) as HTMLCanvasElement;
   const gl = canvas.getContext('webgl2') as WebGL2RenderingContextExt;
@@ -41,6 +43,10 @@ function GLInstance(canvasID: string): WebGL2RenderingContextExt | null {
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
     return buffer;
+  }
+
+  gl.fAnimate = function(callback: (deltaTime: number) => void, fpsLimit: number = 1000) {
+    return new RenderLoop(callback, fpsLimit).start();
   }
 
   return gl;

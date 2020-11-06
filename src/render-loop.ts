@@ -1,4 +1,4 @@
-export class RenderLoop {
+export class RenderLoop implements IRenderLoop {
   private msLastFrame: number = -1; // The time in milliseconds of the last frame 
   private msFpsLimit: number = 1000 / this.fpsLimit; // Calc how many milliseconds per frame in one second of time
   private isActive: boolean = false; // Control the On/Off state of the render loop
@@ -25,7 +25,7 @@ export class RenderLoop {
     }
   }
 
-  public start() {
+  public start(): this {
     this.isActive = true;
     this.msLastFrame = performance.now();
     window.requestAnimationFrame(this.run);
