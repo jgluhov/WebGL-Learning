@@ -23,10 +23,11 @@ function main() {
   gl.useProgram(shaderProg);
   const aPositionLoc = gl.getAttribLocation(shaderProg, 'a_position');
   const uPointSize = gl.getUniformLocation(shaderProg, 'uPointSize');
+  const uAngle = gl.getUniformLocation(shaderProg, 'uAngle');
   gl.useProgram(null);
   
   // setup data buffers
-  const vertices = new Float32Array([0, 0, 0, 0.5, 0.5, 0]);
+  const vertices = new Float32Array([0, 0, 0]);
   const bufferVertices = gl.fCreateArrayBuffer(vertices)
   
   // setup for drawing
@@ -39,8 +40,18 @@ function main() {
   gl.vertexAttribPointer(aPositionLoc, 3, gl.FLOAT, false, 0, 0); // set which buffer the attribute will pull data from
   gl.bindBuffer(gl.ARRAY_BUFFER, null); // done setting up the buffer
 
-  gl.fAnimate(() => {
-    gl.uniform1f(uPointSize, 50.0);
+  let gPointSize = 0,
+    gPointSizeStep = 3,
+    gAngle = 0,
+    gAngleStep = (Math.PI / 180) * 90;
+
+  gl.fAnimate((dt: number) => {
+    gPointSize += gPointSizeStep * dt;
+    const pSize = (Math.sin(gPointSize) * 10.0) + 30.0
+    gl.uniform1f(uPointSize, pSize);
+
+    gAngle += gAngleStep * dt;
+    gl.uniform1f(uAngle, gAngle);
 
     gl.fClear();
     gl.drawArrays(gl.POINTS, 0, vertices.length / 3);
